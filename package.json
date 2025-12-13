@@ -1,0 +1,24 @@
+{
+  "name": "liviaa-bot",
+  "version": "1.0.0",
+  "description": "Liviaa🌷 aesthetic WhatsApp bot using ye-bail (Baileys), ESM, Node 20+",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "NODE_OPTIONS='--trace-warnings' node --watch index.js",
+    "restart": "npm run start"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pino": "^8.17.0",
+    "sharp": "^0.33.5",
+    "fs-extra": "^11.2.0",
+    "nanostores": "^0.9.5",
+    "uuid": "^9.0.1",
+    "mime-types": "^2.1.35",
+    "ye-bail": "github:yemobyte/ye-bail"
+  }
+}
