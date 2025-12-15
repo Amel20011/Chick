@@ -1,27 +1,42 @@
-import { sendButtonImage } from "../../lib/utils.js";
-import { cuteMenu } from "../../lib/message.js";
-import config from "../../config.js";
+import { DB } from "../../lib/database.js";
+import { reply } from "../../lib/message.js";
 
 export const command = "menu";
 
-export async function run({ sock, meta }) {
-  const items = [
-    "Main: info, ping, allmenu",
-    "Group: add, kick, promote, demote, tagall, hidetag, setname, setdesc, mute, unmute, linkgroup, revoke, delete",
-    "Owner: self, public, setppbot, restart, shutdown, backup, block, unblock"
-  ];
-  const caption = cuteMenu(`Liviaa🌷 Menu ${config.aesthetic.emojis}`, items);
-  const footer = `ᯓᡣ𐭩 ${config.aesthetic.icons}`;
-  await sendButtonImage(
-    sock,
-    meta.jid,
-    config.media.menu,
-    caption,
-    footer,
-    [
-      { type: "quick", text: "𓂃 All Menu", id: "allmenu" },
-      { type: "quick", text: "ᥫ᭡ Info", id: "info" },
-      { type: "call", text: "🌹 Call Owner", phone: config.ownerNumber }
-    ]
-  );
+export async function run({ sock, meta, args }) {
+  const userJid = meta.sender;
+  
+  // Cek apakah user sudah terdaftar (untuk private chat)
+  if (!meta.isGroup) {
+    const userData = await DB.getUser(userJid) || {};
+    if (!userData.registered) {
+      return reply(sock, meta.jid, 
+        "❌ Kamu belum terdaftar!\n\n" +
+        "Silahkan klik button Daftar terlebih dahulu untuk menggunakan menu."
+      );
+    }
+  }
+  
+  // Tampilkan menu utama
+  const menuText = 
+    `📱 *MENU BOT CHICK* 📱\n\n` +
+    `╭─❏ *GROUP COMMANDS*\n` +
+    `│ • .antilinkall on/off\n` +
+    `│ • .antipromosi on/off\n` +
+    `│ • .welcome on/off\n` +
+    `│ • .group open/close\n` +
+    `╰─────────────\n\n` +
+    `╭─❏ *MAIN COMMANDS*\n` +
+    `│ • .menu\n` +
+    `│ • .owner\n` +
+    `│ • .ping\n` +
+    `│ • .status\n` +
+    `╰─────────────\n\n` +
+    `╭─❏ *OTHER*\n` +
+    `│ • .daftar (untuk private)\n` +
+    `│ • .help\n` +
+    `╰─────────────\n\n` +
+    `🌸 Bot created by Amel20011 🌸`;
+  
+  await reply(sock, meta.jid, menuText);
 }
