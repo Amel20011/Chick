@@ -5,7 +5,6 @@ const URL_REGEX = /(https?:\/\/[^\s]+|www\.[^\s]+|t\.me\/[^\s]+|instagram\.com\/
 
 // Plugin antilinkall
 export default {
-  // Method run akan dipanggil untuk setiap pesan
   async run({ sock, config, meta }) {
     try {
       // Hanya proses di grup
@@ -15,6 +14,9 @@ export default {
       const userJid = meta.sender;
       const body = meta.body;
       const key = meta.key;
+      
+      // Update group last active
+      await DB.updateGroupLastActive(groupJid);
       
       // Ambil data grup
       const g = await DB.getGroup(groupJid) || {};
@@ -41,7 +43,7 @@ export default {
           console.log("Gagal menghapus pesan antilinkall:", error);
         }
         
-        // Inisialisasi warnings
+        // Inisialisasi warnings di data group
         if (!g.warnings_link) g.warnings_link = {};
         if (!g.warnings_link[userJid]) g.warnings_link[userJid] = 0;
         
@@ -94,14 +96,7 @@ export default {
                   index: 2,
                   quickReplyButton: {
                     displayText: "📋 Detail Kesalahan",
-                    id: "detail_link_" + Date.now()
-                  }
-                },
-                {
-                  index: 3,
-                  quickReplyButton: {
-                    displayText: "✅ Saya Mengerti",
-                    id: "mengerti_link_" + Date.now()
+                    id: "detail_link"
                   }
                 }
               ]
