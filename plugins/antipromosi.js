@@ -13,7 +13,6 @@ const PHONE_REGEX = /(\+62|62|08)(\d{8,12})/g;
 
 // Plugin antipromosi
 export default {
-  // Method run akan dipanggil untuk setiap pesan
   async run({ sock, config, meta }) {
     try {
       // Hanya proses di grup
@@ -23,6 +22,9 @@ export default {
       const userJid = meta.sender;
       const body = meta.body;
       const key = meta.key;
+      
+      // Update group last active
+      await DB.updateGroupLastActive(groupJid);
       
       // Ambil data grup
       const g = await DB.getGroup(groupJid) || {};
@@ -78,7 +80,7 @@ export default {
           console.log("Gagal menghapus pesan antipromosi:", error);
         }
         
-        // Inisialisasi warnings
+        // Inisialisasi warnings di data group (bukan user)
         if (!g.warnings_promosi) g.warnings_promosi = {};
         if (!g.warnings_promosi[userJid]) g.warnings_promosi[userJid] = 0;
         
